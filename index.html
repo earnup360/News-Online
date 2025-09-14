@@ -1,539 +1,1074 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Round Corner Image Editor</title>
+    <title>বাংলা নিউজ অ্যাগ্রিগেটর</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
+            --primary-color: #1a73e8;
+            --secondary-color: #0d47a1;
+            --accent-color: #f44336;
+            --light-bg: #f8f9fa;
+            --dark-bg: #202124;
             --text-color: #333;
-            --bg-color: #f8f9fa;
-            --card-bg: #fff;
-            --border-color: #e0e0e0;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-        }
-
-        [data-theme="dark"] {
-            --primary-color: #4895ef;
-            --secondary-color: #4361ee;
-            --text-color: #f8f9fa;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --border-color: #333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --light-text: #fff;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--light-bg);
             color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 15px;
         }
 
+        /* Header Styles */
         header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 5px 10px;
+            width: 40%;
+        }
+
+        .search-container input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 100%;
+            outline: none;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-toggle, .notifications {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 15px;
+            position: relative;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Navigation Styles */
+        nav {
+            background-color: var(--secondary-color);
+            padding: 10px 0;
+        }
+
+        .categories {
+            display: flex;
+            list-style: none;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .categories li {
+            margin-right: 20px;
+        }
+
+        .categories a {
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .categories a:hover, .categories a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .news-section h2 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .dark-mode .news-card {
+            background: #2d2d2d;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 15px;
+        }
+
+        .news-source {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .dark-mode .news-source {
+            color: #aaa;
+        }
+
+        .source-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .news-date {
+            color: #888;
+        }
+
+        .news-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .news-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .dark-mode .news-desc {
+            color: #ccc;
+        }
+
+        .read-more {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .dark-mode .sidebar {
+            background: #2d2d2d;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .trending-news, .popular-sources {
             margin-bottom: 30px;
         }
 
-        h1 {
-            font-size: 2rem;
-            color: var(--primary-color);
+        .trending-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dark-mode .trending-item {
+            border-bottom: 1px solid #444;
+        }
+
+        .trending-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .trending-img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .trending-content {
+            flex: 1;
+        }
+
+        .trending-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .source-list {
+            list-style: none;
+        }
+
+        .source-list li {
             margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            transition: var(--transition);
         }
 
-        .description {
-            color: var(--text-color);
-            opacity: 0.8;
-            margin-bottom: 20px;
+        .dark-mode .source-list li {
+            background-color: #3d3d3d;
         }
 
-        .theme-toggle {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
+        .source-list li:hover {
+            background-color: #e0e0e0;
+        }
+
+        .dark-mode .source-list li:hover {
+            background-color: #4d4d4d;
+        }
+
+        .source-list a {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            color: var(--text-color);
+            text-decoration: none;
         }
 
-        .theme-toggle:hover {
-            background: var(--secondary-color);
+        .dark-mode .source-list a {
+            color: var(--light-text);
         }
 
-        .app-container {
+        .source-list i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Breaking News Banner */
+        .breaking-news {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .breaking-content {
+            display: flex;
+            align-items: center;
+            animation: scrollBreaking 30s linear infinite;
+        }
+
+        .breaking-label {
+            background: white;
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 15px;
+            white-space: nowrap;
+        }
+
+        .breaking-text {
+            white-space: nowrap;
+        }
+
+        @keyframes scrollBreaking {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 30px 0;
+            margin-top: 40px;
+        }
+
+        .footer-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(4, 1fr);
             gap: 30px;
         }
 
+        .footer-section h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
-            .app-container {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+            
+            .search-container {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .user-actions {
+                justify-content: center;
+            }
+            
+            .footer-content {
                 grid-template-columns: 1fr;
             }
         }
 
-        .upload-section, .preview-section {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius);
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 20px;
-            position: relative;
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .dark-mode .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Embedded News Styles */
+        .embedded-news {
+            margin-top: 30px;
+            border-top: 2px solid var(--primary-color);
+            padding-top: 20px;
+        }
+        
+        .embedded-source {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary-color);
-        }
-
-        .upload-area.active {
-            border-color: var(--primary-color);
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            color: var(--primary-color);
             margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
-
-        .upload-text {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
+        
+        .dark-mode .embedded-source {
+            border-bottom: 1px solid #444;
         }
-
-        .upload-hint {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.7;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .controls {
-            margin-top: 20px;
-        }
-
-        .control-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .slider {
-            flex: 1;
-            height: 8px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #ddd;
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
+        
+        .source-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            background-color: #f0f0f0;
             border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .value-display {
-            width: 50px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .preview-container {
-            width: 100%;
-            height: 300px;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            background-color: var(--bg-color);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 20px;
-            position: relative;
-            border: 1px solid var(--border-color);
-        }
-
-        #previewImage {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 0;
-            transition: border-radius 0.2s;
-        }
-
-        .image-info {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: none;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: var(--text-color);
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        .drag-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(67, 97, 238, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-weight: bold;
             color: var(--primary-color);
-            font-size: 1.2rem;
-            border-radius: var(--radius);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
         }
-
-        .drag-overlay.active {
-            opacity: 1;
+        
+        .dark-mode .source-icon {
+            background-color: #3d3d3d;
+        }
+        
+        .embedded-articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .last-updated {
+            text-align: right;
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+        
+        .dark-mode .last-updated {
+            color: #aaa;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div>
-                <h1>Round Corner Image Editor</h1>
-                <p class="description">আপনার ইমেজের কর্নারগুলোকে সুন্দর গোলাকার করে নিন</p>
+    <!-- Header Section -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-newspaper"></i>
+                বাংলা নিউজ অ্যাগ্রিগেটর
             </div>
-            <button class="theme-toggle" id="themeToggle">
-                <span id="themeIcon">🌙</span>
-                <span id="themeText">ডার্ক মোড</span>
-            </button>
-        </header>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="খবর খুঁজুন...">
+            </div>
+            <div class="user-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-        <div class="app-container">
-            <div class="upload-section">
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📁</div>
-                    <div class="upload-text">ইমেজ আপলোড করুন</div>
-                    <div class="upload-hint">ক্লিক করুন অথবা ইমেজ ড্রাগ এন্ড ড্রপ করুন</div>
-                    <div class="drag-overlay" id="dragOverlay">ইমেজ ড্রপ করুন</div>
-                    <input type="file" id="fileInput" accept="image/*">
-                </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="categories">
+                <li><a href="#" class="active">সব খবর</a></li>
+                <li><a href="#">রাজনীতি</a></li>
+                <li><a href="#">খেলাধুলা</a></li>
+                <li><a href="#">বিনোদন</a></li>
+                <li><a href="#">অর্থনীতি</a></li>
+                <li><a href="#">আন্তর্জাতিক</a></li>
+                <li><a href="#">প্রযুক্তি</a></li>
+                <li><a href="#">স্বাস্থ্য</a></li>
+                <li><a href="#">শিক্ষা</a></li>
+            </ul>
+        </div>
+    </nav>
 
-                <div class="controls">
-                    <div class="control-group">
-                        <label for="cornerRadius">কর্নার রাউন্ডনেস</label>
-                        <div class="slider-container">
-                            <input type="range" min="0" max="150" value="0" class="slider" id="cornerRadius">
-                            <span class="value-display" id="radiusValue">0px</span>
-                        </div>
-                    </div>
+    <!-- Breaking News Banner -->
+    <div class="breaking-news">
+        <div class="container">
+            <div class="breaking-content">
+                <span class="breaking-label">ব্রেকিং নিউজ</span>
+                <span class="breaking-text">জাতীয় বাজেট নিয়ে সংসদে আলোচনা শুরু হলো আজ | প্রধানমন্ত্রী আগামীকাল দেশের নামে গুরুত্বপূর্ণ ঘোষণা দেবেন | করোনাভাইরাসের নতুন ভেরিয়েন্ট নিয়ে স্বাস্থ্য মন্ত্রণালয়ের জরুরি বৈঠক</span>
+            </div>
+        </div>
+    </div>
 
-                    <div class="btn-group">
-                        <button class="btn" id="downloadBtn">
-                            <span>ডাউনলোড (PNG)</span>
-                        </button>
-                        <button class="btn btn-secondary" id="resetBtn">
-                            <span>রিসেট</span>
-                        </button>
-                    </div>
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="news-section">
+            <h2>সর্বশেষ খবর</h2>
+            <div class="news-grid" id="newsContainer">
+                <!-- News cards will be loaded here -->
+                <div class="loading">
+                    <div class="spinner"></div>
                 </div>
             </div>
-
-            <div class="preview-section">
-                <h2>প্রিভিউ</h2>
-                <div class="preview-container">
-                    <img id="previewImage" src="" alt="Preview Image">
-                    <div class="image-info" id="imageInfo"></div>
+            
+            <!-- Embedded News Sections -->
+            <div class="embedded-news">
+                <div class="embedded-source">
+                    <div class="source-icon">স</div>
+                    <h3>সময় নিউজ</h3>
                 </div>
-                <p>আপনার ইমেজের প্রিভিউ এখানে দেখানো হবে। কর্নার রাউন্ডনেস স্লাইড করে পরিবর্তন করতে পারবেন।</p>
+                <div class="embedded-articles" id="somoyNews">
+                    <!-- Somoy News articles will be loaded here -->
+                </div>
+                <div class="last-updated">সর্বশেষ আপডেট: <span id="somoyUpdateTime">লোড হচ্ছে...</span></div>
+            </div>
+            
+            <div class="embedded-news">
+                <div class="embedded-source">
+                    <div class="source-icon">ট</div>
+                    <h3>টিভি নিউজ</h3>
+                </div>
+                <div class="embedded-articles" id="tNews">
+                    <!-- T News articles will be loaded here -->
+                </div>
+                <div class="last-updated">সর্বশেষ আপডেট: <span id="tNewsUpdateTime">লোড হচ্ছে...</span></div>
+            </div>
+            
+            <div class="embedded-news">
+                <div class="embedded-source">
+                    <div class="source-icon">য</div>
+                    <h3>যমুনা টিভি</h3>
+                </div>
+                <div class="embedded-articles" id="jamunaNews">
+                    <!-- Jamuna News articles will be loaded here -->
+                </div>
+                <div class="last-updated">সর্বশেষ আপডেট: <span id="jamunaUpdateTime">লোড হচ্ছে...</span></div>
+            </div>
+            
+            <div class="embedded-news">
+                <div class="embedded-source">
+                    <div class="source-icon">প</div>
+                    <h3>প্রথম আলো</h3>
+                </div>
+                <div class="embedded-articles" id="prothomAloNews">
+                    <!-- Prothom Alo articles will be loaded here -->
+                </div>
+                <div class="last-updated">সর্বশেষ আপডেট: <span id="prothomAloUpdateTime">লোড হচ্ছে...</span></div>
             </div>
         </div>
 
-        <footer>
-            <p>© 2023 Round Corner Image Editor | তৈরি করেছেন আপনার জন্য</p>
-        </footer>
+        <div class="sidebar">
+            <div class="trending-news">
+                <h3>ট্রেন্ডিং খবর</h3>
+                <div class="trending-item">
+                    <img src="https://picsum.photos/80/60?random=1" alt="Trending News" class="trending-img">
+                    <div class="trending-content">
+                        <div class="trending-title">ক্রিকেট বিশ্বকাপে বাংলাদেশের জয়</div>
+                        <div class="news-date">১০ মিনিট আগে</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <img src="https://picsum.photos/80/60?random=2" alt="Trending News" class="trending-img">
+                    <div class="trending-content">
+                        <div class="trending-title">নতুন ট্যাক্স নীতি নিয়ে আলোচনা</div>
+                        <div class="news-date">১ ঘন্টা আগে</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <img src="https://picsum.photos/80/60?random=3" alt="Trending News" class="trending-img">
+                    <div class="trending-content">
+                        <div class="trending-title">বাংলাদেশে নতুন প্রযুক্তি সম্মেলন</div>
+                        <div class="news-date">২ ঘন্টা আগে</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <img src="https://picsum.photos/80/60?random=4" alt="Trending News" class="trending-img">
+                    <div class="trending-content">
+                        <div class="trending-title">শিল্পক্ষেত্রে নতুন বিনিয়োগ</div>
+                        <div class="news-date">৩ ঘন্টা আগে</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popular-sources">
+                <h3>নিউজ সোর্স</h3>
+                <ul class="source-list">
+                    <li><a href="#"><i class="fas fa-globe"></i> সময়</a></li>
+                    <li><a href="#"><i class="fas fa-tv"></i> টিভি</a></li>
+                    <li><a href="#"><i class="fas fa-water"></i> যমুনা টিভি</a></li>
+                    <li><a href="#"><i class="fas fa-newspaper"></i> বাংলা প্রথম আলো</a></li>
+                    <li><a href="#"><i class="fas fa-star"></i> সমকাল</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>আমাদের সম্পর্কে</h3>
+                    <p>বাংলা নিউজ অ্যাগ্রিগেটর হল একটি প্ল্যাটফর্ম যেখানে আপনি বিভিন্ন বাংলা নিউজ সোর্সের খবর একসাথে পাবেন।</p>
+                </div>
+                <div class="footer-section">
+                    <h3>দ্রুত লিংক</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">হোম</a></li>
+                        <li><a href="#">রাজনীতি</a></li>
+                        <li><a href="#">খেলাধুলা</a></li>
+                        <li><a href="#">বিনোদন</a></li>
+                        <li><a href="#">যোগাযোগ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>নিউজ সোর্স</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">সময়</a></li>
+                        <li><a href="#">টিভি</a></li>
+                        <li><a href="#">যমুনা টিভি</a></li>
+                        <li><a href="#">বাংলা প্রথম আলো</a></li>
+                        <li><a href="#">সমকাল</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>সামাজিক যোগাযোগ</h3>
+                    <p>আমাদের সাথে যুক্ত থাকুন</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; ২০২৩ বাংলা নিউজ অ্যাগ্রিগেটর। সকল حقوق محفوظة।</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const fileInput = document.getElementById('fileInput');
-            const uploadArea = document.getElementById('uploadArea');
-            const previewImage = document.getElementById('previewImage');
-            const cornerRadius = document.getElementById('cornerRadius');
-            const radiusValue = document.getElementById('radiusValue');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const imageInfo = document.getElementById('imageInfo');
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const themeText = document.getElementById('themeText');
-            const dragOverlay = document.getElementById('dragOverlay');
+        // Sample news data
+        const newsData = [
+            {
+                id: 1,
+                title: "জাতীয় বাজেট নিয়ে সংসদে তুমুল আলোচনা",
+                desc: "আগামী অর্থবছরের জন্য প্রস্তাবিত বাজেট নিয়ে সংসদে তুমুল আলোচনা শুরু হয়েছে। বিরোধী দলগুলি বাজেটের বিভিন্ন দpoint নিয়ে প্রশ্ন তুলেছে।",
+                image: "https://picsum.photos/400/200?random=1",
+                source: "সময়",
+                category: "রাজনীতি",
+                date: "৫ মিনিট আগে",
+                url: "#"
+            },
+            {
+                id: 2,
+                title: "ক্রিকেট বিশ্বকাপে বাংলাদেশের জয়",
+                desc: "আইসিসি ক্রিকেট বিশ্বকাপে বাংলাদেশের ক্রিকেট দল ওয়েস্ট ইন্ডিজকে ৫ উইকেটে হারিয়ে জয়লাভ করেছে।",
+                image: "https://picsum.photos/400/200?random=2",
+                source: "টিভি",
+                category: "খেলাধুলা",
+                date: "১৫ মিনিট আগে",
+                url: "#"
+            },
+            {
+                id: 3,
+                title: "নতুন সিনেমা নিয়ে আসছেন সাকিব খান",
+                desc: "জনপ্রিয় অভিনেতা সাকিব খান আগামী মাসে নতুন একটি সিনেমা নিয়ে আসছেন। সিনেমাটির শুটিং সম্পূর্ণ হয়েছে।",
+                image: "https://picsum.photos/400/200?random=3",
+                source: "যমুনা টিভি",
+                category: "বিনোদন",
+                date: "৩০ মিনিট আগে",
+                url: "#"
+            },
+            {
+                id: 4,
+                title: "শেয়ার বাজারে নতুন রেকর্ড",
+                desc: "দেশের শেয়ার বাজারে নতুন রেকর্ড সৃষ্টি হয়েছে। ডিএসই-এর সূচক ৬,৫০০ points অতিক্রম করেছে।",
+                image: "https://picsum.photos/400/200?random=4",
+                source: "বাংলা প্রথম আলো",
+                category: "অর্থনীতি",
+                date: "১ ঘন্টা আগে",
+                url: "#"
+            },
+            {
+                id: 5,
+                title: "যুক্তরাষ্ট্রে বাংলাদেশ দূতাবাসের নতুন ভবন উদ্বোধন",
+                desc: "যুক্তরাষ্ট্রে বাংলাদেশ দূতাবাসের নতুন ভবন আনুষ্ঠানিকভাবে উদ্বোধন করা হয়েছে। প্রধানমন্ত্রী ভার্চুয়ালি উদ্বোধন ceremony এ অংশ নিয়েছেন।",
+                image: "https://picsum.photos/400/200?random=5",
+                source: "সমকাল",
+                category: "আন্তর্জাতিক",
+                date: "২ ঘন্টা আগে",
+                url: "#"
+            },
+            {
+                id: 6,
+                title: "নতুন স্মার্টফোন নিয়ে আসছে ওয়ালটন",
+                desc: "স্থানীয় প্রযুক্তি কোম্পানি ওয়ালটন আগামী সপ্তাহে নতুন একটি স্মার্টফোন মডেল বাজারে আনছে।",
+                image: "https://picsum.photos/400/200?random=6",
+                source: "টিভি",
+                category: "প্রযুক্তি",
+                date: "৩ ঘন্টা আগে",
+                url: "#"
+            },
+            {
+                id: 7,
+                title: "করোনাভাইরাসের নতুন ভেরিয়েন্ট নিয়ে সতর্কতা",
+                desc: "স্বাস্থ্য মন্ত্রণালয় করোনাভাইরাসের নতুন একটি ভেরিয়েন্ট নিয়ে সতর্কতা জারি করেছে। দেশে এখনো এই ভেরিয়েন্ট শনাক্ত হয়নি।",
+                image: "https://picsum.photos/400/200?random=7",
+                source: "সময়",
+                category: "স্বাস্থ্য",
+                date: "৪ ঘন্টা আগে",
+                url: "#"
+            },
+            {
+                id: 8,
+                title: "শিক্ষা প্রতিষ্ঠানে নতুন curriculum চালু",
+                desc: "আগামী শিক্ষাবর্ষ থেকে দেশের সকল শিক্ষা প্রতিষ্ঠানে নতুন curriculum চালু করা হবে। শিক্ষা মন্ত্রণালয় এই সংক্রান্ত বিজ্ঞপ্তি জারি করেছে।",
+                image: "https://picsum.photos/400/200?random=8",
+                source: "বাংলা প্রথম আলো",
+                category: "শিক্ষা",
+                date: "৫ ঘন্টা আগে",
+                url: "#"
+            }
+        ];
 
-            // Variables
-            let currentImage = null;
-            let currentImageName = '';
+        // Embedded news data for different sources
+        const embeddedNewsData = {
+            somoy: [
+                {
+                    title: "সময়: প্রধানমন্ত্রীর বিশেষ ঘোষণা আসছে",
+                    desc: "প্রধানমন্ত্রী আগামীকাল দেশের নামে একটি গুরুত্বপূর্ণ ঘোষণা দেবেন বলে সময় সংবাদ মাধ্যমকে জানিয়েছে।",
+                    image: "https://picsum.photos/400/200?random=21",
+                    time: "২ মিনিট আগে",
+                    url: "#"
+                },
+                {
+                    title: "সময়: নতুন মেট্রোরেলের trial run শুরু",
+                    desc: "ঢাকা মেট্রোরেলের trial run শুরু হয়েছে। আগামী মাসে যাত্রীদের জন্য খুলে দেওয়া হবে।",
+                    image: "https://picsum.photos/400/200?random=22",
+                    time: "২০ মিনিট আগে",
+                    url: "#"
+                }
+            ],
+            tNews: [
+                {
+                    title: "টিভি: বিশ্বকাপ ক্রিকেটে বাংলাদেশের প্রস্তুতি",
+                    desc: "আসন্ন বিশ্বকাপ ক্রিকেটে বাংলাদেশ দলের প্রস্তুতি নিয়ে টিভিতে বিশেষ প্রতিবেদন।",
+                    image: "https://picsum.photos/400/200?random=23",
+                    time: "১৫ মিনিট আগে",
+                    url: "#"
+                },
+                {
+                    title: "টিভি: বন্যার্তদের জন্য সাহায্য",
+                    desc: "উত্তরবঙ্গের বন্যার্তদের জন্য সরকারি ও বেসরকারি সাহায্য তৎপরতা চলছে।",
+                    image: "https://picsum.photos/400/200?random=24",
+                    time: "১ ঘন্টা আগে",
+                    url: "#"
+                }
+            ],
+            jamuna: [
+                {
+                    title: "যমুনা: অর্থমন্ত্রীর বাজেট ঘোষণা",
+                    desc: "আগামীকাল অর্থমন্ত্রী জাতীয় সংসদে বাজেট উপস্থাপন করবেন। যমুনা টিভি সরাসরি সম্প্রচার করবে।",
+                    image: "https://picsum.photos/400/200?random=25",
+                    time: "১০ মিনিট আগে",
+                    url: "#"
+                },
+                {
+                    title: "যমুনা: নতুন ব্রিজের উদ্বোধন",
+                    desc: "পদ্মা নদীর উপর নির্মিত নতুন ব্রিজের উদ্বোধন ceremony আগামী সপ্তাহে হবে।",
+                    image: "https://picsum.photos/400/200?random=26",
+                    time: "৪৫ মিনিট আগে",
+                    url: "#"
+                }
+            ],
+            prothomAlo: [
+                {
+                    title: "প্রথম আলো: শিক্ষা খাতে বাজেট বরাদ্দ",
+                    desc: "আগামী বাজেটে শিক্ষা খাতে বরাদ্দ ১৫% বৃদ্ধি পাবে বলে প্রথম আলো সূত্রে জানা গেছে।",
+                    image: "https://picsum.photos/400/200?random=27",
+                    time: "৫ মিনিট আগে",
+                    url: "#"
+                },
+                {
+                    title: "প্রথম আলো: করোনা ভ্যাকসিনের নতুন ডোজ",
+                    desc: "দেশে করোনা ভ্যাকসিনের নতুন ডোজ আসছে আগামী মাসে। বয়স্ক নাগরিকদের优先তা দেওয়া হবে।",
+                    image: "https://picsum.photos/400/200?random=28",
+                    time: "১ ঘন্টা আগে",
+                    url: "#"
+                }
+            ]
+        };
 
-            // Event Listeners
-            uploadArea.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', handleFileSelect);
-            cornerRadius.addEventListener('input', updateCornerRadius);
-            downloadBtn.addEventListener('click', downloadImage);
-            resetBtn.addEventListener('click', resetAll);
-            themeToggle.addEventListener('click', toggleTheme);
+        // DOM elements
+        const newsContainer = document.getElementById('newsContainer');
+        const themeToggle = document.getElementById('themeToggle');
+        const searchInput = document.querySelector('.search-container input');
+        
+        // Embedded news containers
+        const somoyNewsContainer = document.getElementById('somoyNews');
+        const tNewsContainer = document.getElementById('tNews');
+        const jamunaNewsContainer = document.getElementById('jamunaNews');
+        const prothomAloNewsContainer = document.getElementById('prothomAloNews');
+        
+        // Update time elements
+        const somoyUpdateTime = document.getElementById('somoyUpdateTime');
+        const tNewsUpdateTime = document.getElementById('tNewsUpdateTime');
+        const jamunaUpdateTime = document.getElementById('jamunaUpdateTime');
+        const prothomAloUpdateTime = document.getElementById('prothomAloUpdateTime');
 
-            // Drag and Drop events
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('active');
-                dragOverlay.classList.add('active');
+        // Function to render news cards
+        function renderNews(newsArray) {
+            newsContainer.innerHTML = '';
+            
+            newsArray.forEach(news => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'news-card';
+                newsCard.innerHTML = `
+                    <img src="${news.image}" alt="${news.title}" class="news-image">
+                    <div class="news-content">
+                        <div class="news-source">
+                            <span class="source-name">${news.source}</span>
+                            <span class="news-date">${news.date}</span>
+                        </div>
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-desc">${news.desc}</p>
+                        <a href="${news.url}" class="read-more">বিস্তারিত পড়ুন</a>
+                    </div>
+                `;
+                newsContainer.appendChild(newsCard);
             });
+        }
 
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('active');
-                dragOverlay.classList.remove('active');
+        // Function to render embedded news
+        function renderEmbeddedNews(container, newsArray) {
+            container.innerHTML = '';
+            
+            newsArray.forEach(news => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'news-card';
+                newsCard.innerHTML = `
+                    <img src="${news.image}" alt="${news.title}" class="news-image">
+                    <div class="news-content">
+                        <div class="news-source">
+                            <span class="news-date">${news.time}</span>
+                        </div>
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-desc">${news.desc}</p>
+                        <a href="${news.url}" class="read-more">বিস্তারিত পড়ুন</a>
+                    </div>
+                `;
+                container.appendChild(newsCard);
             });
+        }
 
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('active');
-                dragOverlay.classList.remove('active');
-                
-                if (e.dataTransfer.files.length) {
-                    fileInput.files = e.dataTransfer.files;
-                    handleFileSelect({ target: fileInput });
-                }
-            });
+        // Function to update all embedded news
+        function updateAllEmbeddedNews() {
+            renderEmbeddedNews(somoyNewsContainer, embeddedNewsData.somoy);
+            renderEmbeddedNews(tNewsContainer, embeddedNewsData.tNews);
+            renderEmbeddedNews(jamunaNewsContainer, embeddedNewsData.jamuna);
+            renderEmbeddedNews(prothomAloNewsContainer, embeddedNewsData.prothomAlo);
+            
+            // Update timestamps
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('bn-BD');
+            
+            somoyUpdateTime.textContent = timeString;
+            tNewsUpdateTime.textContent = timeString;
+            jamunaUpdateTime.textContent = timeString;
+            prothomAloUpdateTime.textContent = timeString;
+        }
 
-            // Functions
-            function handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
+        // Initial render
+        renderNews(newsData);
+        updateAllEmbeddedNews();
 
-                if (!file.type.match('image.*')) {
-                    alert('দয়া করে একটি ইমেজ ফাইল নির্বাচন করুন');
-                    return;
-                }
-
-                currentImageName = file.name.split('.')[0];
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    currentImage = e.target.result;
-                    updateImageInfo(file);
-                };
-                reader.readAsDataURL(file);
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             }
-
-            function updateCornerRadius() {
-                const radius = cornerRadius.value;
-                previewImage.style.borderRadius = `${radius}px`;
-                radiusValue.textContent = `${radius}px`;
-            }
-
-            function downloadImage() {
-                if (!currentImage) {
-                    alert('দয়া করে প্রথমে একটি ইমেজ আপলোড করুন');
-                    return;
-                }
-
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
-                
-                img.onload = function() {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    
-                    // Clear canvas with transparent background
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Create rounded corners
-                    const radius = parseInt(cornerRadius.value);
-                    ctx.beginPath();
-                    ctx.moveTo(radius, 0);
-                    ctx.lineTo(img.width - radius, 0);
-                    ctx.quadraticCurveTo(img.width, 0, img.width, radius);
-                    ctx.lineTo(img.width, img.height - radius);
-                    ctx.quadraticCurveTo(img.width, img.height, img.width - radius, img.height);
-                    ctx.lineTo(radius, img.height);
-                    ctx.quadraticCurveTo(0, img.height, 0, img.height - radius);
-                    ctx.lineTo(0, radius);
-                    ctx.quadraticCurveTo(0, 0, radius, 0);
-                    ctx.closePath();
-                    ctx.clip();
-                    
-                    // Draw the image with transparent background
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Convert to PNG with transparent background
-                    const url = canvas.toDataURL('image/png');
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${currentImageName}_rounded${cornerRadius.value > 0 ? `_${cornerRadius.value}px` : ''}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                };
-                
-                img.src = currentImage;
-            }
-
-            function resetAll() {
-                previewImage.src = '';
-                currentImage = null;
-                cornerRadius.value = 0;
-                radiusValue.textContent = '0px';
-                previewImage.style.borderRadius = '0';
-                fileInput.value = '';
-                imageInfo.style.display = 'none';
-            }
-
-            function updateImageInfo(file) {
-                const img = new Image();
-                img.onload = function() {
-                    imageInfo.textContent = `${file.name} | ${img.width}×${img.height}px | ${formatFileSize(file.size)}`;
-                    imageInfo.style.display = 'block';
-                };
-                img.src = URL.createObjectURL(file);
-            }
-
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            function toggleTheme() {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                if (currentTheme === 'dark') {
-                    document.documentElement.removeAttribute('data-theme');
-                    themeIcon.textContent = '🌙';
-                    themeText.textContent = 'ডার্ক মোড';
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    themeIcon.textContent = '☀️';
-                    themeText.textContent = 'লাইট মোড';
-                }
-            }
-
-            // Initialize
-            resetAll();
         });
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredNews = newsData.filter(news => 
+                news.title.toLowerCase().includes(searchTerm) || 
+                news.desc.toLowerCase().includes(searchTerm) ||
+                news.source.toLowerCase().includes(searchTerm) ||
+                news.category.toLowerCase().includes(searchTerm)
+            );
+            renderNews(filteredNews);
+        });
+
+        // Category filter functionality
+        const categoryLinks = document.querySelectorAll('.categories a');
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                categoryLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                link.classList.add('active');
+                
+                const category = link.textContent;
+                if (category === 'সব খবর') {
+                    renderNews(newsData);
+                } else {
+                    const filteredNews = newsData.filter(news => news.category === category);
+                    renderNews(filteredNews);
+                }
+            });
+        });
+
+        // Simulate real-time updates every 2 minutes
+        setInterval(() => {
+            // Add a new news item to each source to simulate update
+            const newSomoyNews = {
+                title: `সময়: নতুন খবর ${Math.floor(Math.random() * 100)}`,
+                desc: "এটি একটি সিমুলেটেড আপডেট যা রিয়েল-টাইমে নিউজ আপডেট দেখানোর জন্য।",
+                image: `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 100)}`,
+                time: "এইমাত্র",
+                url: "#"
+            };
+            
+            embeddedNewsData.somoy.unshift(newSomoyNews);
+            embeddedNewsData.somoy.pop();
+            
+            updateAllEmbeddedNews();
+            
+            // Show notification
+            const notificationCount = document.querySelector('.notification-count');
+            notificationCount.textContent = parseInt(notificationCount.textContent) + 1;
+            
+        }, 120000); // 2 minutes
     </script>
 </body>
 </html>
